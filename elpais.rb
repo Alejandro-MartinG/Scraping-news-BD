@@ -54,7 +54,9 @@ class Elpais
 
   def save_info notices
     # TODO: save notices in files or ddbb
-    notices
+    a = File.open("notices.txt","w")
+    a.write(notices)
+    a.close
   end
 
 end
