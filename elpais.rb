@@ -11,30 +11,32 @@ class Elpais
   end
 
   def get_notices
-    notices = []
+    notices = {}
     url = ""
 
     page = get_page(URL_SOC)
     puts last_page?(page)
-    while last_page?(page)
-      table = page.css('.columna_principal')
-      table.css('.article.estirar').each do |notice|
-        date = notice.css('.fecha').text
-        link = notice.css('h2 > a').attr("href").text
-        title = notice.css('h2 > a').text
-        desc = notice.css('p').text
-        notices << {
-          "date" => date,
-          "link" => link,
-          "title" => title,
-          "desc" => desc
-        }
+    File.open('notices.txt', 'a') do |f|
+      while last_page?(page)
+        table = page.css('.columna_principal')
+        table.css('.article.estirar').each do |notice|
+          date = notice.css('.fecha').text
+          link = notice.css('h2 > a').attr("href").text
+          title = notice.css('h2 > a').text
+          desc = notice.css('p').text
+          notices = {
+            "date" => date,
+            "link" => link,
+            "title" => title,
+            "desc" => desc
+          }
+          f.puts notices
+        end
+        url = next_page(page)
+        page = get_page(url)
       end
-      url = next_page(page)
-      page = get_page(url)
     end
 
-    save_info(notices)
   end
 
   def get_page url
@@ -50,13 +52,6 @@ class Elpais
     puts page.css('.paginacion > .boton.activo').first.attr('title')
     return true if page.css('.paginacion > .boton.activo').first.attr('title').eql?("Página siguiente")
     false
-  end
-
-  def save_info notices
-    # TODO: save notices in files or ddbb
-    a = File.open("notices.txt","w")
-    a.write(notices)
-    a.close
   end
 
 end

@@ -18,29 +18,32 @@ class Elperiodico
     page = get_page(URL_SOC)
     #puts last_page?(page)
     #while last_page?(page)
-    (2..N_PAGES).each do |number|
-      table = page.css('#cmp-list-last-news-container')
-      table.css('.item').each do |notice|
-        date = notice.css('.fecha').text
-        puts date
-        link = URL + notice.css('h2 > a').attr("href").text
-        title = notice.css('h2 > a').attr('title').text
-        desc = notice.css('.p2').text
-        notices << {
-          "date" => date,
-          "link" => link,
-          "title" => title,
-          "desc" => desc
-        }
-        puts notices
-        page = "#{URL_SOC}cmp-lst-last-news-#{number.to_s}.inc"
+    File.open('notices.txt', 'a') do |f|
+      (2..N_PAGES).each do |number|
+        table = page.css('#cmp-list-last-news-container')
+        table.css('.item').each do |notice|
+          date = notice.css('.fecha').text
+          puts date
+          link = URL + notice.css('h2 > a').attr("href").text
+          title = notice.css('h2 > a').attr('title').text
+          desc = notice.css('.p2').text
+          notices << {
+            "date" => date,
+            "link" => link,
+            "title" => title,
+            "desc" => desc
+          }
+          puts notices
+          f.puts notices
+          page = "#{URL_SOC}cmp-lst-last-news-#{number.to_s}.inc"
+        end
       end
     end
-      #url = next_page(page)
-      #page = get_page(url)
+    #url = next_page(page)
+    #page = get_page(url)
     #end
 
-    save_info(notices)
+    #save_info(notices)
   end
 
   def get_page url
@@ -49,13 +52,13 @@ class Elperiodico
   end
 
   #def next_page page
-    #URL + page.css('.paginacion > .boton.activo').first.attr('href')
+  #URL + page.css('.paginacion > .boton.activo').first.attr('href')
   #end
 
   #def last_page? page
-    #puts page.css('.paginacion > .boton.activo').first.attr('title')
-    #return true if page.css('.paginacion > .boton.activo').first.attr('title').eql?("Página siguiente")
-    #false
+  #puts page.css('.paginacion > .boton.activo').first.attr('title')
+  #return true if page.css('.paginacion > .boton.activo').first.attr('title').eql?("Página siguiente")
+  #false
   #end
 
   def save_info notices
