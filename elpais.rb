@@ -41,7 +41,7 @@ class Elpais
 
   def get_page url
     response = @http.get(url)
-    page = Nokogiri::HTML(response.body)
+    Nokogiri::HTML(response.body)
   end
 
   def next_page page
